@@ -1,9 +1,10 @@
-import paramiko
+import paramiko, time
 #''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 #''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-nss=str("04745520645")
+nss=str("49906345969")
 #''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 #''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+proc=str("false")
 # Archivo a editar
 remote_file = "/PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/NSS_UNICOS.txt"
 
@@ -25,36 +26,50 @@ for i, linea in enumerate(lineas_respuesta):
         break
 
 #Para que se comenten todas la líneas
-stdin, stdout, stderr = ssh.exec_command("sed -i '/java/s/^java/#java/' /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh")
+stdin, stdout, stderr = ssh.exec_command("sed -i '/java/s/^java -jar/#java -jar/' /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh")
 
+if ciz_a_corregir == "PROCESO TERMINADO":
+    print("Inconsistenica NO localizada WÁCHALE BIEN")
+    proc=("false")
 #Ediciones para CI en CIZ 1
-if ciz_a_corregir == "SSCI_CUENTA_INDIV_REG1_UNICOS.txt":
+elif ciz_a_corregir == "SSCI_CUENTA_INDIV_REG1_UNICOS.txt":
     stdin, stdout, stderr = ssh.exec_command("sed -i '/UNI_CIR1/s/^#//' /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh")
+    proc=("true")
 #Ediciones para CI en CIZ 2
 elif ciz_a_corregir == "SSCI_CUENTA_INDIV_REG2_UNICOS.txt":
     stdin, stdout, stderr = ssh.exec_command("sed -i '/UNI_CIR2/s/^#//' /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh")
+    proc=("true")
 #Ediciones para CI en CIZ 3
 elif ciz_a_corregir == "SSCI_CUENTA_INDIV_REG3_UNICOS.txt":
     stdin, stdout, stderr = ssh.exec_command("sed -i '/UNI_CIR3/s/^#//' /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh")
+    proc=("true")
 #Ediciones para HIST de CI en CIZ 1
 elif ciz_a_corregir == "SSHC_HIST_CUENTA_REG1_UNICOS.txt":
     stdin, stdout, stderr = ssh.exec_command("sed -i '/UNI_HCR1/s/^#//' /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh")
+    proc=("true")
 #Ediciones para HIST de CI en CIZ 2
 elif ciz_a_corregir == "SSHC_HIST_CUENTA_REG2_UNICOS.txt":
     stdin, stdout, stderr = ssh.exec_command("sed -i '/UNI_HCR2/s/^#//' /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh")
+    proc=("true")
 #Ediciones para HIST de CI en CIZ 3
 elif ciz_a_corregir == "SSHC_HIST_CUENTA_REG3_UNICOS.txt":
     stdin, stdout, stderr = ssh.exec_command("sed -i '/UNI_HCR3/s/^#//' /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh")
-#Casos no localizados o sin correcciones qué hacer 
-elif ciz_a_corregir == "PROCESO TERMINADO":
-    print("Inconsistenica NO localizada WÁCHALE BIEN")
+    proc=("true")
 else:
     print("COMBINACIÓN NO MAPEADA, CORRECCIÓN MÚLTIPLE")
+    proc=("false")
 
-stdin, stdout, stderr = ssh.exec_command("nohup /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh &")
+if proc=="true":
+    time.sleep(1)
+    stdin, stdout, stderr = ssh.exec_command("nohup /PROCESO/imssdigital/DB/UNICOS/ARGUMENTADOS/kactualizaUNICOS.sh &")
+    proc=("true")
+    print("SINCRONIZACIÓN COMPLETADA *(^o^)*")
+
+
+
 
 ssh.close()
-print("SINCRONIZACIÓN COMPLETADA *(^o^)*")
+
 
 #''''''
 #''''''
